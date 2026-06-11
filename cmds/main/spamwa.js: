@@ -1,0 +1,29 @@
+export default {
+    command: ["spamwa", "spam"],
+    category: "fun",
+    run: async (sock, m, { args, text, usedPrefix, command }) => {
+        // Ejemplo de uso: .spamwa 521234567890 | Hola | 10
+        let [jid, msg, count] = text.split("|");
+
+        if (!jid || !msg || !count) {
+            return m.reply(`🏮 *USO CORRECTO*\n\n${usedPrefix + command} numero|mensaje|cantidad\n\n*Ejemplo:*\n${usedPrefix + command} 521234567890|Hola|5`);
+        }
+
+        // Limpiamos el número por si acaso
+        let target = jid.trim().replace(/[^0-9]/g, '') + '@s.whatsapp.net';
+        let cantidad = parseInt(count.trim());
+
+        // Límite de seguridad para que el bot no se trabe
+        if (cantidad > 50) return m.reply("❌ El límite máximo es de 50 mensajes por vez.");
+
+        await m.reply(`🚀 Iniciando envío de ${cantidad} mensajes a @${jid.trim()}...`, null, { mentions: [target] });
+
+        for (let i = 0; i < cantidad; i++) {
+            await sock.sendMessage(target, { text: msg.trim() });
+            // Un pequeño retraso para no saturar la conexión
+            await new Promise(resolve => setTimeout(resolve, 500)); 
+        }
+
+        await m.reply("✅ Spam finalizado con éxito.");
+    }
+};

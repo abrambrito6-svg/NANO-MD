@@ -1,0 +1,130 @@
+import fetch from 'node-fetch'
+
+export default {
+  command: ['pinterest', 'pin'],
+  category: 'search',
+
+  run: async (client, m, args, usedPrefix, command) => {
+    const text = args.join(' ')
+    const isPinterestUrl = /^https?:\/\//.test(text)
+    if (!text) {
+      return m.reply('《✧》 Por favor, escribe algo para buscar en Pinterest.')
+    }
+
+    try {
+
+      if (isPinterestUrl) {
+
+        const data = await getPinterestDownload(text)
+
+        if (!data) {
+          return m.reply('《✧》 No pude obtener contenido de ese enlace.')
+        return m.reply(`❌no eres usuario premium, compra premio para usar este comando.`)
+
+        }
+
+        if (data.type === 'video') {
+
+          await client.sendMessage(m.chat, {
+            video: { url: data.url },
+            caption: `✦ Pinterest Download\n\n🌸 Yae Miku BOT`
+          }, { quoted: m })
+
+        } else {
+
+          await client.sendMessage(m.chat, {
+            image: { url: data.url },
+            caption: `✦ Pinterest Download\n\n🌸 Yae Miku BOT`
+          }, { quoted: m })
+
+        }
+
+      } else {
+
+        const results = await getPinterestSearch(text)
+
+        if (!results || results.length === 0) {
+          return m.reply(`《✧》 No encontré resultados para *${text}*.`)
+        }
+
+        for (let i = 0; i < Math.min(results.length, 5); i++) {
+
+          const img = results[i]
+
+          await client.sendMessage(m.chat, {
+            image: { url: img.image },
+
+            caption:
+`✦ Resultado de: ${text}
+
+≪☆ Pinterest HD - Búsquedas ☆≫`,
+
+          }, { quoted: m })
+
+        }
+
+      }
+
+    } catch (e) {
+
+      console.log(e)
+
+      await m.reply(
+`《✧》 Error al ejecutar el comando
+
+${e.message}`
+      )
+
+    }
+
+  }
+}
+
+async function getPinterestDownload(url) {
+
+  const endpoint =
+`${global.APIs.stellar.url}/dl/pinterest?url=${encodeURIComponent(url)}&key=${global.APIs.stellar.key}`
+
+  try {
+
+    const res = await fetch(endpoint)
+    const json = await res.json()
+
+    if (!json.status || !json.data?.dl) return null
+
+    return {
+      type: json.data.type,
+      url: json.data.dl
+    }
+
+  } catch {
+
+    return null
+
+  }
+
+}
+
+async function getPinterestSearch(query) {
+
+  const endpoint =
+`${global.APIs.stellar.url}/search/pinterest?query=${encodeURIComponent(query)}&key=${global.APIs.stellar.key}`
+
+  try {
+
+    const res = await fetch(endpoint)
+    const json = await res.json()
+
+    if (!json.data || !json.data.length) return []
+
+    return json.data.map(v => ({
+      image: v.image || v.hd
+    }))
+
+  } catch {
+
+    return []
+
+  }
+
+}

@@ -1,0 +1,37 @@
+export default {
+    command: ["kurumi", "ia", "chatgpt"],
+    category: "ai",
+    run: async (sock, m, { text, usedPrefix, command }) => {
+        try {
+            if (!text) return m.reply("⏳ ¿Qué es lo que deseas pedirme?");
+
+            const miNumero = "50231882808@s.whatsapp.net";
+            const esOwner = m.sender === miNumero;
+
+            // Detección de solicitudes de código o archivos
+            const pideCodigo = /codigo|script|termux|archivo|file/i.test(text);
+
+            if (pideCodigo && !esOwner) {
+                // Respuesta restrictiva para usuarios comunes
+                return m.reply("⏳ ¿De verdad creías que te daría eso? No eres mi jefe. No tengo ninguna obligación de ayudarte.");
+            }
+
+            if (esOwner) {
+                // Aquí se procesaría la solicitud con la API si cuentas con una Key estable
+                if (pideCodigo) {
+                    await m.reply("⏳ Entendido. Procesando el código para Termux...");
+                    // Lógica para generar o enviar el código requerido
+                } else {
+                    await m.reply("⏳ Hola. Dime qué necesitas que analice por ti.");
+                }
+            } else {
+                // Respuesta general con la personalidad fría para los demás usuarios
+                await m.reply("⏳ Qué pérdida de tiempo... No tengo interés en conversar contigo.");
+            }
+
+        } catch (e) {
+            console.error(e);
+            m.reply(`❌ Error en los engranajes del sistema: ${e.message}`);
+        }
+    }
+};

@@ -1,0 +1,8 @@
+{ { "name": "yae-miku-web", "version": "1.0.0", "scripts": { "type": "module", "test": 
+  "echo \"Error: no test specified\" && exit 1" "main": "server.js" }, "keywords": [], 
+  "author": "", "license": "ISC", "type": "commonjs", "dependencies": {
+}    "@whiskeysockets/baileys": "^6.7.7",
+    "express": "^5.2.1",
+    "pino": "^10.3.1"
+  }
+}

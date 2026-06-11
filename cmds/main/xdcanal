@@ -1,0 +1,10 @@
+if (text === 'canal') {
+
+const data = await sock.newsletterMetadata(
+'invite',
+'0029Vb88DAM0G0XiQes3K42c'
+)
+
+m.reply(JSON.stringify(data, null, 2))
+
+}

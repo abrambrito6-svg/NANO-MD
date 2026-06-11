@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yae Miku SubBot</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:sans-serif;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:url('https://i.ibb.co/TB0xg59B/ff19e20616babb1e807e73f029145f36.jpg');
+background-size:cover;
+background-position:center;
+overflow:hidden;
+}
+
+.overlay{
+position:absolute;
+inset:0;
+background:rgba(0,0,0,0.72);
+backdrop-filter:blur(3px);
+}
+
+.box{
+position:relative;
+z-index:2;
+width:90%;
+max-width:420px;
+background:rgba(20,20,20,0.95);
+padding:30px;
+border-radius:25px;
+text-align:center;
+box-shadow:0 0 25px #ff4da6;
+border:1px solid rgba(255,255,255,0.1);
+}
+
+.logo{
+width:140px;
+height:140px;
+border-radius:50%;
+object-fit:cover;
+margin-bottom:15px;
+border:4px solid #ff4da6;
+box-shadow:0 0 20px #ff4da6;
+}
+
+h1{
+color:#ff4da6;
+font-size:34px;
+margin-bottom:10px;
+}
+
+p{
+color:white;
+margin-bottom:10px;
+font-size:15px;
+}
+
+input{
+width:100%;
+padding:15px;
+border:none;
+outline:none;
+border-radius:14px;
+background:#2a2a2a;
+color:white;
+margin-top:15px;
+font-size:16px;
+}
+
+button{
+width:100%;
+padding:15px;
+border:none;
+border-radius:14px;
+margin-top:15px;
+background:#ff4da6;
+color:white;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.03);
+background:#ff2f92;
+}
+
+#result{
+margin-top:20px;
+color:#fff;
+font-size:18px;
+word-break:break-word;
+background:#111;
+padding:15px;
+border-radius:15px;
+display:none;
+}
+
+.copy{
+margin-top:10px;
+background:#222;
+}
+
+.footer{
+margin-top:20px;
+font-size:12px;
+opacity:0.7;
+}
+</style>
+</head>
+<body>
+
+<div class="overlay"></div>
+
+<div class="box">
+
+<img
+class="logo"
+src="https://i.ibb.co/WWKp6V4M/5a90db637e1cc7da5cbbfca8729a1e7a.jpg"
+>
+
+<h1>Yae Miku</h1>
+
+<p>🌸 Bot creado por Nano-Void</p>
+<p>💮 Inspirado en Yae Miku</p>
+<p>✨ Elige cómo conectar tu SubBot</p>
+
+<input
+id="number"
+type="text"
+placeholder="502XXXXXXXX"
+>
+
+<button onclick="connectBot()">
+Conectar SubBot
+</button>
+
+<div id="result"></div>
+
+<button
+id="copyBtn"
+class="copy"
+style="display:none"
+onclick="copyCode()"
+>
+Copiar Código
+</button>
+
+<div class="footer">
+Yae Miku MD © 2026
+</div>
+
+</div>
+
+<script>
+let currentCode = '';
+
+async function connectBot(){
+
+const number =
+document.getElementById('number').value;
+
+const result =
+document.getElementById('result');
+
+result.style.display = 'block';
+result.innerHTML = '⏳ Generando código...';
+
+try {
+
+const req = await fetch('/connect', {
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify({ number })
+});
+
+const data = await req.json();
+
+if(data.status){
+
+currentCode = data.code;
+
+result.innerHTML = `🌸 Código:<br><br><b>${data.code}</b>`;
+
+document.getElementById('copyBtn').style.display = 'block';
+
+}else{
+
+result.innerHTML = '❌ No se pudo generar el código';
+
+}
+
+} catch(err){
+
+result.innerHTML = '❌ Error del servidor';
+
+}
+
+}
+
+function copyCode(){
+
+navigator.clipboard.writeText(currentCode);
+
+alert('🌸 Código copiado');
+
+}
+</script>
+
+</body>
+</html>

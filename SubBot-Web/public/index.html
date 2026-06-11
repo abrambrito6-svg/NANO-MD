@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yae Miku SubBot</title>
+
+<style>
+
+body{
+margin:0;
+padding:0;
+font-family:sans-serif;
+background:url('https://i.ibb.co/TB0xg59B/ff19e20616babb1e807e73f029145f36.jpg');
+background-size:cover;
+background-position:center;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.box{
+width:350px;
+background:rgba(0,0,0,.7);
+padding:30px;
+border-radius:25px;
+backdrop-filter:blur(10px);
+text-align:center;
+color:white;
+box-shadow:0 0 25px #ff66cc;
+}
+
+.logo{
+width:140px;
+border-radius:50%;
+margin-bottom:15px;
+box-shadow:0 0 20px #ff66cc;
+}
+
+h1{
+margin:10px 0;
+color:#ff99dd;
+}
+
+p{
+font-size:14px;
+opacity:.8;
+}
+
+input{
+width:90%;
+padding:15px;
+border:none;
+border-radius:15px;
+margin-top:20px;
+outline:none;
+font-size:16px;
+}
+
+button{
+margin-top:20px;
+padding:15px 30px;
+border:none;
+border-radius:15px;
+background:#ff66cc;
+color:white;
+font-size:16px;
+cursor:pointer;
+}
+
+button:hover{
+opacity:.8;
+}
+
+#result{
+margin-top:20px;
+font-size:20px;
+font-weight:bold;
+color:#ff99dd;
+word-break:break-all;
+}
+
+</style>
+
+</head>
+<body>
+
+<div class="box">
+
+<img class="logo"
+src="https://i.ibb.co/qLQXG20R/Picsart-25-05-06-23-47-54-137.png">
+
+<h1>🌸 Yae Miku</h1>
+
+<p>
+Bot creado por Nano-void 💀<br>
+Inspirado en Yae Miku ✨
+</p>
+
+<input
+type="text"
+id="number"
+placeholder="502XXXXXXXX">
+
+<br>
+
+<button onclick="getCode()">
+Generar Code
+</button>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+async function getCode(){
+
+const number =
+document.getElementById('number').value
+
+const result =
+document.getElementById('result')
+
+result.innerHTML =
+'🌸 Generando código...'
+
+const req =
+await fetch('/code',{
+method:'POST',
+headers:{
+'Content-Type':'application/json'
+},
+body:JSON.stringify({
+number
+})
+})
+
+const data = await req.json()
+
+if(data.status){
+
+result.innerHTML =
+'✅ CODE: ' + data.code
+
+} else {
+
+result.innerHTML =
+'❌ No se pudo generar'
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
