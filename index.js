@@ -324,7 +324,7 @@ global.loadDatabase()
 console.log(
 chalk.hex('#00ffcc')(`
 ╭━━━━━━━━━━━━━━━━━━━━━━━━━━━━╮
-┃ ✅ Base de datos cargada  ┃
+┃ |🜸|🜸Base de datos cargada  ┃
 ╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
 `)
 )
