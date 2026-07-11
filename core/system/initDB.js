@@ -8,14 +8,14 @@ function initDB(m, client) {
   settings.prefix ??= ['/', '!', '.', '#']
   settings.commandsejecut ??= isNumber(settings.commandsejecut) ? settings.commandsejecut : 0
   settings.id ??= '120363427643259597@newsletter'
-  settings.nameid ??= "𝙕𝙖𝙛𝙠𝙞𝙚𝙡 𝘾𝙝𝙖𝙣𝙣𝙚𝙡 』σƒƒเ૮เαℓ ૮ɦαɳɳεℓ࿐"
+  settings.nameid ??= "☾『𝗦𝗵𝗶𝗿𝗼𝗸𝗼 𝗖𝗵𝗮𝗻𝗻𝗲𝗹』☽"
   settings.type ??= 'Owner'
   settings.link ??= 'https://api.kurumi-nano.my.id'
   settings.banner ??= 'https://files.catbox.moe/lwepuq.jpg'
   settings.icon ??= 'https://files.catbox.moe/i8qkky.jpg'
-  settings.currency ??= 'Yenes'
-  settings.namebot ??= 'Kurumi' // <--- Cambiado para tu rebrand
-  settings.botname ??= 'Kurumi Tokisaki '  
+  settings.currency ??= '⟡ ShiroCoins'
+  settings.namebot ??= '𖤐『𝗦𝗵𝗶𝗿𝗼𝗸𝗼 𝗠𝗗』' // <--- Cambiado para tu rebrand
+  settings.botname ??= '☾『𝗦𝗵𝗶𝗿𝗼𝗸𝗼 𝗔𝗜』 '  
   settings.owner ??= ''
 
   // --- CONFIGURACIÓN DE USUARIO (GLOBAL) ---
