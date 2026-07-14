@@ -9,17 +9,17 @@ global.OPENROUTER_API = 'sk-or-v1-bed31342f15f5b0da95b646b22ba3cdadc050e314ead6a
 
 global.sessionName = 'Sessions/Owner'
 global.version = '^2.0 - Latest'
-global.dev = "© Powered by Rachel Gardner - NanoVoid"
+global.dev = "Powered by 𓆩✧𓆪 𝐍𝐚𝐯𝐢"
 
 global.links = {
 api: 'https://api.yaemikubot.my.id',
 channel: "https://whatsapp.com/channel/0029Vb88DAM0G0XiQes3K42c",
-github: "https://github.com/NanoVoid/YaeMiku-Bot",
-gmail: "thekingdestroy507@gmail.com"
+github: "https://github.com/abrambrito6-svg/NANO-MD",
+gmail: "zephnano@gmail.com"
 }
 
 global.my = {
-name: 'ೃ࿔Rachel Gardner AI System .ೃ࿐',
+name: '𓆩✧𓆪 𝐍𝐚𝐯𝐢',
 }
 
 //━━━━━━━━━━━━━━━━━━━━━━━━━━//
