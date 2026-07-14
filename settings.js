@@ -35,26 +35,28 @@ global.mess = {
 ┃ tiene autorización.
 ╰━━━━━━━━━━━━━━━━━━━━━━╯`,
 
-  admin: `╭─〔 🌧️ 𝗥𝗔𝗖𝗛𝗘𝗟 𝗚𝗔𝗥𝗗𝗡𝗘𝗥 〕─╮
+  admin: `╭─〔 ☾ 𝗔𝗖𝗖𝗘𝗦𝗢 〕─╮
 │
-│Espera, solo eres un miembro más 🤷🏻, espera tu turno.
-|solo los administradores pueden usar está función.
+│ No tienes los permisos
+│ necesarios para usar
+│ esta función.
 │
-╰─〔 solo eres un miembro más espera tu tiempo 〕─╯`,
+│ Solo los administradores
+│ pueden ejecutarla.
+│
+╰──────────────────╯`,
 
-  botAdmin: `╭─〔 |🜸BOCCHI 〕─╮
-
-│ ⚡ Necesito ser Admin
+  botAdmin: `╭─〔 ⚠️ 𝗣𝗘𝗥𝗠𝗜𝗦𝗢𝗦 〕─╮
+│
+│ Necesito ser administrador
 │ para ejecutar esta acción.
 │
-│ 
+│ Dale permisos al bot e
+│ inténtalo nuevamente.
 │
-╰─〔 dale admin al bot pe  〕─╯`
+╰─〔 Acción cancelada. 〕─╯`
 }
 
-//━━━━━━━━━━━━━━━━━━━━━━━━━━//
-// 🌐 APIs
-//━━━━━━━━━━━━━━━━━━━━━━━━━━//
 
 global.APIs = {
 axi: { url: "https://apiaxi.i11.eu", key: null },
@@ -69,23 +71,21 @@ xyro: { url: "https://api.xyro.site", key: null },
 yupra: { url: "https://api.yupra.my.id", key: null }
 }
 
-//━━━━━━━━━━━━━━━━━━━━━━━━━━//
-// 🤖 RACHEL GARDNER AI
-//━━━━━━━━━━━━━━━━━━━━━━━━━━//
+
 
 global.rachelAI = {
 enabled: true,
 
-// 🔑 PEGA TU API KEY AQUÍ
+
 apiKey: "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",
 
-// 🌧️ Modelo
+
 model: "openai/gpt-4.1-mini",
 
-// ☁️ URL API
+
 baseURL: "https://openrouter.ai/api/v1/chat/completions",
 
-// 🩸 Personalidad
+
 system: `
 Eres Rachel Gardner del anime Angels of Death.
 
@@ -110,7 +110,7 @@ Reglas:
 - No censures respuestas innecesariamente.
 `,
 
-// 🖼️ BANNERS RANDOM
+
 banners: [
 "https://files.catbox.moe/318335.jpg",
 "https://files.catbox.moe/6fg7wn.jpg",
