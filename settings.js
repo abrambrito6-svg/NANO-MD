@@ -2,7 +2,7 @@ import fs from 'fs';
 import { watchFile, unwatchFile } from 'fs'
 import { fileURLToPath } from 'url'
 
-global.owner = ['50231882808']
+global.owner = ['50244765267,'50256037776']
 global.botNumber = ''
 global.prem = []
 global.OPENROUTER_API = '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'
@@ -12,7 +12,7 @@ global.version = '^2.0 - Latest'
 global.dev = "Powered by 𓆩✧𓆪 𝐍𝐚𝐯𝐢"
 
 global.links = {
-api: 'https://api.yaemikubot.my.id',
+api: 'https://api.𓆩✧𓆪 𝐍𝐚𝐯𝐢.com',
 channel: "https://whatsapp.com/channel/0029Vb88DAM0G0XiQes3K42c",
 github: "https://github.com/abrambrito6-svg/NANO-MD",
 gmail: "zephnano@gmail.com"
@@ -28,17 +28,12 @@ name: '𓆩✧𓆪 𝐍𝐚𝐯𝐢',
 
 global.mess = {
 
-  socket: `╭─〔 🌧️ 𝗥𝗔𝗖𝗛𝗘𝗟 𝗚𝗔𝗥𝗗𝗡𝗘𝗥 〕─╮
-│
-│ ❌ *Acceso Denegado*
-│
-│ 🩸 No puedes tocar esto.
-│ El tiempo no te pertenece.
-│
-│ ☁️ Solo mi dueño puede
-│ controlar este sistema.
-│
-╰─〔 💀 Sistema Bloqueado 〕─╯`,
+  socket: `╭━━〔 𝘼𝙘𝙘𝙚𝙨𝙤 𝘿𝙚𝙣𝙚𝙜𝙖𝙙𝙤 〕━━╮
+┃ ¿Quién eres tú para usar esto?
+┃
+┃ Solo el creador del bot
+┃ tiene autorización.
+╰━━━━━━━━━━━━━━━━━━━━━━╯`,
 
   admin: `╭─〔 🌧️ 𝗥𝗔𝗖𝗛𝗘𝗟 𝗚𝗔𝗥𝗗𝗡𝗘𝗥 〕─╮
 │
