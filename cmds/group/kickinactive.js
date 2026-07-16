@@ -1,101 +1,54 @@
-const NL = {
-  contextInfo: {
-    forwardingScore: 999,
-    isForwarded: true,
-    forwardedNewsletterMessageInfo: {
-      newsletterJid: '120363427643259597@newsletter',
-      newsletterName: '\u300E \uD835\uDE15\uD835\uDE56\uD835\uDE57\uD835\uDE60\u03B9\uD835\uDE5A\u03BB \uD835\uDE3E\uD835\uDE5D\uD835\uDE56\uD835\uDE63\uD835\uDDFB\uD835\uDE5A\u03BB \u300F',
-      serverMessageId: 1
-    }
-  }
-};
-
-const pending = new Map();
-
 export default {
-  command: ['kickinactivos', 'purgafantasmas', 'kickghost'],
+  command: ['kickinactive', 'kickfantasmas'],
   category: 'grupo',
   isAdmin: true,
-  botAdmin: true,
-  run: async (client, m, args) => {
+  run: async (client, m, args, usedPrefix, command) => {
     try {
-      if (!m.isGroup) return m.reply('Solo en grupos, querido~', null, NL);
+      const chat = global.db.data.chats[m.chat] || {}
+      const scan = chat.lastInactiveScan
 
-      const limit = Math.max(0, parseInt(args[0]) || 3);
-      const meta = await client.groupMetadata(m.chat);
-      const chatDB = global.db.data.chats[m.chat] || {};
-      const activity = chatDB.activity || {};
-      const ownerNum = (global.owner && global.owner[0] && global.owner[0][0]) ? global.owner[0][0] : '';
+      if (!scan || !scan.users?.length) {
+        return m.reply(`> ✎ No hay una lista de inactivos reciente. Usa *${usedPrefix}topinactive* primero.`)
+      }
 
-      const ghosts = meta.participants
-        .filter(p => {
-          const n = activity[p.id] || 0;
-          const isAdmin = p.admin === 'admin' || p.admin === 'superadmin';
-          const isMe = p.id === (client.user && client.user.id);
-          const isOwner = String(p.id).startsWith(String(ownerNum));
-          return n <= limit && !isAdmin && !isMe && !isOwner;
-        })
-        .map(p => ({ id: p.id, n: activity[p.id] || 0 }));
+      const TEN_MIN = 10 * 60 * 1000
+      if (Date.now() - scan.timestamp > TEN_MIN) {
+        return m.reply(`> ✎ La lista expiró (han pasado más de 10 minutos). Usa *${usedPrefix}topinactive* de nuevo para generar una nueva.`)
+      }
 
-      if (!ghosts.length) return m.reply('No hay fantasmas para purgar, fufufu~', null, NL);
+      const botId = client.user.id.split(':')[0] + '@s.whatsapp.net'
+      const groupMetadata = await client.groupMetadata(m.chat).catch(() => null)
+      const isBotAdmin = groupMetadata?.participants?.find(p => p.id === botId)?.admin
 
-      let txt = '《✧》Purga de Fantasmas — Kurumi Tokisaki\n';
-      txt += '✎ Detectados ' + ghosts.length + ' fantasmas (≤ ' + limit + ' msgs):\n\n';
-      ghosts.forEach((u, i) => {
-        txt += '👻 ' + String(i + 1).padStart(2, '0') + ' @' + String(u.id).split('@')[0] + ' — ' + u.n + ' msgs\n';
-      });
-      txt += '\n❏ Responde *SI* en 60s para devorar sus tiempos.';
+      if (!isBotAdmin) {
+        return m.reply('> ✎ Necesito ser administrador del grupo para expulsar usuarios.')
+      }
 
-      const sent = await client.sendMessage(m.chat, {
-        text: txt,
-        mentions: ghosts.map(u => u.id),
-        ...NL
-      }, { quoted: m });
+      await m.reply(`> ⏳ Expulsando a *${scan.users.length}* usuarios inactivos...`)
 
-      pending.set(m.chat + '|' + m.sender, {
-        ghosts: ghosts,
-        ts: Date.now(),
-        msgId: sent && sent.key ? sent.key.id : null
-      });
+      let kicked = 0
+      let failed = 0
 
-      setTimeout(() => pending.delete(m.chat + '|' + m.sender), 60000);
-    } catch (e) {
-      m.reply('✿ Error: ' + (e && e.message ? e.message : e), null, NL);
-    }
-  },
-
-  before: async (client, m) => {
-    try {
-      if (!m.isGroup) return false;
-      const key = m.chat + '|' + m.sender;
-      const data = pending.get(key);
-      if (!data) return false;
-      if (Date.now() - data.ts > 60000) { pending.delete(key); return false; }
-
-      const body = (m.text || m.body || '').trim().toUpperCase();
-      if (body !== 'SI' && body !== 'SÍ') return false;
-
-      pending.delete(key);
-      await m.reply('《✧》Comenzando la purga... fufufu~', null, NL);
-
-      let ok = 0, fail = 0;
-      for (const g of data.ghosts) {
+      for (const jid of scan.users) {
         try {
-          await client.groupParticipantsUpdate(m.chat, [g.id], 'remove');
-          ok++;
-          await new Promise(r => setTimeout(r, 1500));
+          await client.groupParticipantsUpdate(m.chat, [jid], 'remove')
+          kicked++
+          await new Promise(r => setTimeout(r, 1200)) // pausa para evitar rate-overlimit
         } catch (e) {
-          fail++;
+          failed++
         }
       }
 
+      // Limpia la lista para que no se pueda reusar
+      chat.lastInactiveScan = null
+      global.db.data.chats[m.chat] = chat
+
       await client.sendMessage(m.chat, {
-        text: '❏ Purga completa.\n✿ Expulsados: ' + ok + '\n✎ Fallidos: ' + fail,
-        ...NL
-      }, { quoted: m });
-      return true;
+        text: `✎ Expulsión completada.\n> ✅ Expulsados: ${kicked}\n> ❌ Fallidos: ${failed}`
+      }, { quoted: m })
+
     } catch (e) {
-      return false;
+      await m.reply(`> An unexpected error occurred while executing command *${usedPrefix + command}*.\n> [Error: *${e.message}*]`)
     }
   }
-};
+}
