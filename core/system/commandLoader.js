@@ -30,23 +30,33 @@ async function seeCommands(dir = commandsFolder) {
         imported = await import(modulePath);
         pluginCache.set(fullPath, { mtime, imported });
       }
+        ////
       const comando = imported.default;
       const pluginName = fileOrFolder.replace(".js", "");
       global.plugins[pluginName] = imported;
-      if (!comando?.command || typeof comando.run!== "function") continue;
-      comando.command.forEach(cmd => {
+
+      const isHandlerStyle = typeof comando === "function";
+      const cmdList = isHandlerStyle ? comando.command : comando?.command;
+      const runFn = isHandlerStyle ? comando : comando?.run;
+
+      if (!cmdList || typeof runFn !== "function") continue;
+      const cmdArray = Array.isArray(cmdList) ? cmdList : [cmdList];
+      cmdArray.forEach(cmd => {
+        if (!cmd) return;
         global.comandos.set(cmd.toLowerCase(), {
           pluginName,
-          run: comando.run,
-          category: comando.category || "uncategorized",
-          isOwner: comando.isOwner || false,
-          isAdmin: comando.isAdmin || false,
+          run: runFn,
+          isHandlerStyle,
+          category: (isHandlerStyle ? comando.tags?.[0] : comando.category) || "uncategorized",
+          isOwner: (isHandlerStyle ? comando.owner : comando.isOwner) || false,
+          isAdmin: (isHandlerStyle ? comando.admin : comando.isAdmin) || false,
           botAdmin: comando.botAdmin || false,
           before: imported.before || null,
           after: imported.after || null,
           info: comando.info || {}
         });
       });
+       /////
     } catch (e) {
       const archivo = fullPath.replace(process.cwd(), '.').replace(/\\/g, '/')
       
@@ -129,17 +139,24 @@ global.reload = async (_ev, fullPath) => {
       for (const [cmd, data] of global.comandos.entries()) {
         if (data.pluginName === pluginName) global.comandos.delete(cmd);
       }
-      global.plugins[pluginName] = imported;
+       ///
+     global.plugins[pluginName] = imported;
       const comando = imported.default;
-      if (comando?.command && typeof comando.run === "function") {
-        const cmds = Array.isArray(comando.command)? comando.command : [comando.command];
+
+      const isHandlerStyle = typeof comando === "function";
+      const cmdList = isHandlerStyle ? comando.command : comando?.command;
+      const runFn = isHandlerStyle ? comando : comando?.run;
+
+      if (cmdList && typeof runFn === "function") {
+        const cmds = Array.isArray(cmdList) ? cmdList : [cmdList];
         cmds.forEach(cmd => {
           if (cmd) global.comandos.set(cmd.toLowerCase(), {
             pluginName,
-            run: comando.run,
-            category: comando.category || "uncategorized",
-            isOwner: comando.isOwner || false,
-            isAdmin: comando.isAdmin || false,
+            run: runFn,
+            isHandlerStyle,
+            category: (isHandlerStyle ? comando.tags?.[0] : comando.category) || "uncategorized",
+            isOwner: (isHandlerStyle ? comando.owner : comando.isOwner) || false,
+            isAdmin: (isHandlerStyle ? comando.admin : comando.isAdmin) || false,
             botAdmin: comando.botAdmin || false,
             before: imported.before || null,
             after: imported.after || null,
@@ -147,6 +164,7 @@ global.reload = async (_ev, fullPath) => {
           });
         });
       }
+        ///////
       console.log(chalk.green(`✓ Plugin recargado: ${filename}`));
     } catch (e) {
       console.error(chalk.red(`⚠ Error al recargar ${filename}:\n`), e);
