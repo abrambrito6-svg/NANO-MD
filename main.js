@@ -6,6 +6,7 @@ import path from 'path';
 import gradient from 'gradient-string';
 import seeCommands from './core/system/commandLoader.js';
 import initDB from './core/system/initDB.js';
+import antistatus from './cmds/anti-status.js';
 import antilink from './cmds/antilink.js';
 import { restrictedCommands, hasPremium, isSubBotJid } from './cmds/economy/premium.js'
 import level from './cmds/level.js';
@@ -18,6 +19,7 @@ export default async (client, m) => {
   if ((m.id.startsWith("3EB0") || (m.id.startsWith("BAE5") && m.id.length === 16) || (m.id.startsWith("B24E") && m.id.length === 20))) return;
   initDB(m, client);
   antilink(client, m);
+  antistatus(client, m);
 
   // 🩸 PISO B6 - CONTADOR DE MENSAJES PARA #TOPON
 if (m.isGroup) {
@@ -266,144 +268,21 @@ if (antiprivado) {
 // ===========================
 // SISTEMA PREMIUM ❄️
 // ===========================
-const isSubBot2 = isSubBotJid(botJid)
-const isOwnerUser2 = global.owner.includes(m.sender.split('@')[0])
-
-console.log(chalk.gray(`[PREMIUM] botJid=${botJid} isSubBot=${isSubBot2} cmd=${command}`))
-
-if (isSubBot2 && !isOwnerUser2 && restrictedCommands.has(command)) {
-  if (!hasPremium(m.sender)) {
-    const banner = global.getBocchiBanner?.() || 'https://files.catbox.moe/5jorq4.jpg'
-    await client.sendMessage(m.chat, {
-      image: { url: banner },
-      caption: `┏━━━━━✦❘༻👑༺❘✦━━━━━┓\n┃ —͟͞ ♱ *COMANDO PREMIUM* ♱ —͟͞\n┗━━━━━✦❘༻👑༺❘✦━━━━━┛\n\n|🜸 El comando *${usedPrefix + command}* no está disponible en *Sub-Bots* sin Premium.\n\n╭─━━━⊱ *¿CÓMO?* ⊰━━━─╮\n│ |🜸 Gana con *${usedPrefix}work*\n│ |🜸 Reclama *${usedPrefix}daily*\n│ |🜸 Compra *${usedPrefix}premium*\n│\n│ *1h* → 500 coins\n│ *1d* → 2,000 coins\n│ *7d* → 10,000 coins\n╰─━━━⊱✧༻♱༺✧⊰━━━─╯\n\n> ❄️ *Kurumi Protocol* - NanoVoid 💜`,
-      contextInfo: {
-        externalAdReply: {
-          title: '👑 Comando Premium',
-          body: `Usa ${usedPrefix}premium`,
-          mediaType: 1,
-          thumbnailUrl: banner,
-          renderLargerThumbnail: false
-        }
-      }
-    }, { quoted: m })
-    return
-  }
-}
+ 
+        
+    
+    
 // ===========================
 // ===========================
 // Verificación de registro
-const sinRegistro = [
-  'reg', 'registro', 'registrar', 'registrarme', 'register',
-  'menu', 'help', 'allmenu', 'ping', 'speed', 'p',
-  'infobot', 'botinfo', 'invite', 'invitar',
-  'status', 'estado'
-]
-
-if (!isOwners && !user.registered && !sinRegistro.includes(command)) {
-
-  const banners = [
-    'https://files.catbox.moe/318335.jpg',
-    'https://files.catbox.moe/6fg7wn.jpg',
-    'https://files.catbox.moe/otwwqo.jpg',
-    'https://files.catbox.moe/gj8kzx.jpg',
-    'https://files.catbox.moe/mh97wx.jpg'
-  ]
-
-  const banner = banners[Math.floor(Math.random() * banners.length)]
-
-  const mensajes = [
-
-`╭━━━〔 🩸 𝙍𝙖𝙘𝙝𝙚𝙡 𝙂𝙖𝙧𝙙𝙣𝙚𝙧 〕━━━╮
-┃ ⚠️ ¿Quién eres tú...?
-┃ ✎ No puedo dejarte entrar todavía.
-┃ ❏ Primero debes registrarte.
-┃
-┃ ➥ Usa:
-┃ ➥ *${usedPrefix}reg Nombre.Edad*
-┃
-┃ ✨ Ejemplo:
-┃ ➥ *${usedPrefix}reg Nano.15*
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-
-> _“Si quieres quedarte conmigo... demuestra quién eres.”_ 🩸`,
-
-`╭━━━〔 🩸 𝘼𝙣𝙜𝙚𝙡𝙨 𝙤𝙛 𝘿𝙚𝙖𝙩𝙝 〕━━━╮
-┃ 🚫 Acceso denegado.
-┃ ✎ Rachel no reconoce tu identidad.
-┃ ❏ Registro obligatorio para continuar.
-┃
-┃ ➥ Comando:
-┃ ➥ *${usedPrefix}reg Nombre.Edad*
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-
-> _“No me gusta hablar con desconocidos...”_ 🌑`,
-
-`╭━━━〔 🩸 𝙍𝙖𝙘𝙝𝙚𝙡 𝙎𝙮𝙨𝙩𝙚𝙢 〕━━━╮
-┃ ❓ Usuario desconocido detectado.
-┃ ✎ Tus datos no existen todavía.
-┃
-┃ 📌 Regístrate usando:
-┃ ➥ *${usedPrefix}reg Nombre.Edad*
-┃
-┃ ✨ Ejemplo:
-┃ ➥ *${usedPrefix}reg Zack.20*
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-
-> _“Quizás después pueda confiar en ti...”_ 🕯️`,
-
-`╭━━━〔 🩸 𝙍𝙖𝙘𝙝𝙚𝙡 𝙂𝙖𝙧𝙙𝙣𝙚𝙧 〕━━━╮
-┃ ⚠️ Espera...
-┃ ✎ No apareces en mis registros.
-┃ ❏ Debes registrarte antes.
-┃
-┃ ➥ Usa:
-┃ ➥ *${usedPrefix}reg Nombre.Edad*
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-
-> _“No quiero perderme otra vez...”_ 🌧️`,
-
-`╭━━━〔 🩸 𝘿𝙚𝙖𝙩𝙝 𝙁𝙡𝙤𝙤𝙧 〕━━━╮
-┃ 🚪 Acceso bloqueado.
-┃ ✎ Rachel está observándote...
-┃ ❏ Identifícate para continuar.
-┃
-┃ ➥ *${usedPrefix}reg Nombre.Edad*
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-
-> _“Tal vez puedas acompañarme...”_ 🔪`
-  ]
-
-  const msg = mensajes[Math.floor(Math.random() * mensajes.length)]
-
-  try {
-    await client.sendMessage(m.chat, {
-      text: msg,
-      contextInfo: {
-        externalAdReply: {
-          title: '🩸 Rachel Gardner - Register',
-          body: '🌑 Sistema de identificación requerido',
-          thumbnailUrl: banner,
-          sourceUrl: 'https://kurumi-tokisha-65e2e9.netlify.app/',
-          mediaType: 1,
-          renderLargerThumbnail: false,
-          showAdAttribution: false
-        },
-        forwardingScore: 999,
-        isForwarded: true,
-        forwardedNewsletterMessageInfo: {
-          newsletterJid: '120363427643259597@newsletter',
-          newsletterName: '『 𝙍𝙖𝙘𝙝𝙚𝙡 𝙂𝙖𝙧𝙙𝙣𝙚𝙧 』',
-          serverMessageId: 1
-        }
-      }
-    }, { quoted: m })
-  } catch (_) {
-    await m.reply(msg)
-  }
-
-  return
-}
+ 
+    
+    
+    
+    
+    
+    
+    
 
   if (!users.stats) users.stats = {};
   if (!users.stats[today]) users.stats[today] = { msgs: 0, cmds: 0 };
@@ -418,153 +297,33 @@ if (!isOwners && !user.registered && !sinRegistro.includes(command)) {
 const criticasComando = [
   {
     img: 'https://files.catbox.moe/318335.jpg',
-    txt: `╭━━━〔 🩸 𝙍𝙖𝙘𝙝𝙚𝙡 𝙂𝙖𝙧𝙙𝙣𝙚𝙧 〕━━━╮
+    txt: `
 ┃ ❓ ¿Qué mierda es *${command}*?
 ┃ ✎ Ese comando no existe aquí.
 ┃ ❏ Usa *${usedPrefix}menu*
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Quizá estás perdido..."_ 🌧️`
-  },
 
-  {
-    img: 'https://files.catbox.moe/6fg7wn.jpg',
-    txt: `╭━━━〔 ☠️ 𝘼𝙣𝙜𝙚𝙡𝙨 𝙊𝙛 𝘿𝙚𝙖𝙩𝙝 〕━━━╮
-┃ Que mierda es *${command}?*
-┃ ✎ esa mierda no existe mierda 
-┃ ❏ Revisa *${usedPrefix}help*
-╰━━━━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"No hagas perder mi tiempo..."_ 🥀`
-  },
-
-  {
-    img: 'https://files.catbox.moe/otwwqo.jpg',
-    txt: `╭━━━〔 🌧️ 𝙍𝙖𝙘𝙝𝙚𝙡 〕━━━╮
-┃ ❌ *${command}* no existe.
-┃ ✎ ¿Te inventas comandos o qué?
-┃ ❏ Usa *${usedPrefix}menu*
-╰━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Incluso Zack entiende mejor..."_ 🔪`
+> _"Quizá estás buscando verga..."_ `
   },
 
   {
     img: 'https://files.catbox.moe/gj8kzx.jpg',
-    txt: `╭━━━〔 🩸 𝙍𝙖𝙘𝙝𝙚𝙡 𝙎𝙮𝙨𝙩𝙚𝙢 〕━━━╮
-┃ esa cagada que mierda 
-┃ ✎ *${command}*
-┃ ❏ Usa *${usedPrefix}help*
-╰━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Qué decepción..."_ ☁️`
-  },
+    txt: `
+┃ esa mierda de 
+┃ ✎ *${command}* que we
+┃ ❏ Usa *${usedPrefix}help* y deja de dar pena 
 
+> _"Qué decepción..."_ `
+  },
+    
+    
   {
     img: 'https://files.catbox.moe/mh97wx.jpg',
-    txt: `╭━━━〔 🔪 𝙍𝙖𝙘𝙝𝙚𝙡 〕━━━╮
-┃ te hace falta cerebro mierda? esa madre
-┃ ✎ *${command}*?
-┃ ❏ no existe pendejo 
-╰━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Tu lógica da miedo..."_ 💔`
-  },
-
-  {
-    img: 'https://files.catbox.moe/318335.jpg',
-    txt: `╭━━━〔 ☠️ 𝘿𝙀𝘼𝘿 𝙀𝙉𝘿 〕━━━╮
-┃ ✎ usa *menu* mierda el *${command}*
-┃ ❌es una cagada total mierda .
-┃ ❏ Usa *${usedPrefix}menu*
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Ni los fantasmas usan eso..."_ 🌧️`
-  },
-
-  {
-    img: 'https://files.catbox.moe/6fg7wn.jpg',
-    txt: `╭━━━〔 🌑 𝙍𝙖𝙘𝙝𝙚𝙡 〕━━━╮
-┃ ⚠️ *${command}* no existe.
-┃ ✎ Tu cerebro tampoco parece.
-┃ ❏ Usa *${usedPrefix}help*
-╰━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Necesitas ayuda..."_ 🥀`
-  },
-
-  {
-    img: 'https://files.catbox.moe/otwwqo.jpg',
-    txt: `╭━━━〔 🩸 𝙎𝙔𝙎𝙏𝙀𝙈 〕━━━╮
-┃ ❌ que pendejo usando
-┃ ✎ *${command}* como si existiera igual que tu cerebro 🧠.
-┃ ❏ Abre *${usedPrefix}menu*
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Qué vergüenza..."_ ☠️`
-  },
-
-  {
-    img: 'https://files.catbox.moe/gj8kzx.jpg',
-    txt: `╭━━━〔 ☁️ 𝙍𝙖𝙘𝙝𝙚𝙡 〕━━━╮
-┃ ❓ Intentaste usar:
+    txt: `
+┃  borra tu mierda el
 ┃ ✎ *${command}*
-┃ ❌ Resultado: fracasado absoluto.
-╰━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Das pena..."_ 🌧️`
-  },
-
-  {
-    img: 'https://files.catbox.moe/mh97wx.jpg',
-    txt: `╭━━━〔 🔪 𝘼𝙉𝙂𝙀𝙇𝙎 𝙊𝙁 𝘿𝙀𝘼𝙏𝙃 〕━━━╮
-┃ ⚠️ El comando *${command}*
-┃ ✎ jamás existió.
-┃ ❏ Usa *${usedPrefix}menu*
-╰━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Tu IQ me preocupa..."_ 💀`
-  },
-
-  {
-    img: 'https://files.catbox.moe/318335.jpg',
-    txt: `╭━━━〔 ☠️ 𝙕𝙖𝙘𝙠 〕━━━╮
-┃  ya das pena con.
-┃ ✎ *${command}* .
-┃ ❏ no existe mejor no uses el bot das asco. *${usedPrefix}menu* o te corta.
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Tiene razón..."_ 🔪`
-  },
-
-  {
-    img: 'https://files.catbox.moe/6fg7wn.jpg',
-    txt: `╭━━━〔 🩸 𝙍𝙖𝙘𝙝𝙚𝙡 𝙂𝙖𝙧𝙙𝙣𝙚𝙧 〕━━━╮
-┃ ⚠️ Nivel de pena ajena: INFINITO
-┃ ✎ Escribiste *${command}* y el Piso B6 se rió.
-┃ ❏ *${usedPrefix}help* antes de que me dé diabetes.
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Qué vergüenza contigo..."_ 🌑`
-  },
-
-  {
-    img: 'https://files.catbox.moe/otwwqo.jpg',
-    txt: `╭━━━〔 ☠️ 𝙋𝙞𝙨𝙤 𝘽6 〕━━━╮
-┃ ❌  esa basura de *${command}*
-┃ ✎ no existe mierda .
-┃ ❏ *${usedPrefix}menu* pa que no empeores.
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Caso clínico..."_ 🔪`
-  },
-
-  {
-    img: 'https://files.catbox.moe/gj8kzx.jpg',
-    txt: `╭━━━〔 🌑 𝙍𝙖𝙮.𝙚𝙭𝙚 〕━━━╮
-┃ apoco 
-┃ ✎  *${command}*
-┃ ❏ existe igual que tú cerebro 🧠? *${usedPrefix}help*
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Sistema corrupto..."_ 🩸`
-  },
-
-  {
-    img: 'https://files.catbox.moe/mh97wx.jpg',
-    txt: `╭━━━〔 🔪 𝙂𝙤𝙙'𝙨 𝙅𝙪𝙙𝙜𝙚𝙢𝙚𝙣𝙩 〕━━━╮
-┃ ⚖️ ese mierdero
-┃ ✎ *${command}*
-┃ ✎ que, mejor borra esa cagada 
-┃ ❏ *${usedPrefix}menu* pa pedir perdón.
-╰━━━━━━━━━━━━━━━━━━━━━━━╯
-> _"Condenado..."_ ☠️`
+┃ ✎ no existe igual que tu cerebro 
+┃ ❏ el *${usedPrefix}menu* es gratis usalo
+> _"xd..."_ `
   }
 ]
 
@@ -574,20 +333,11 @@ const randomCritica = criticasComando[Math.floor(Math.random() * criticasComando
 await client.sendMessage(m.chat, {
   text: randomCritica.txt, // ← SOLO TEXTO, SIN IMAGE:
   contextInfo: {
-    externalAdReply: {
-      title: '🩸 Rachel Gardner - Angels of Death',
-      body: '☁️ Comando inexistente detectado...',
-      thumbnailUrl: randomCritica.img, // ← MINI THUMBNAIL SOLO AQUÍ
-      sourceUrl: 'https://kurumi-tokisha-65e2e9.netlify.app/',
-      mediaType: 1,
-      renderLargerThumbnail: false, // ← FALSE = MINI
-      showAdAttribution: false
-    },
     forwardingScore: 999,
     isForwarded: true,
     forwardedNewsletterMessageInfo: {
       newsletterJid: '120363427643259597@newsletter',
-      newsletterName: '『 𝙍𝙖𝙘𝙝𝙚𝙡 𝙂𝙖𝙧𝙙𝙣𝙚𝙧 』',
+      newsletterName: '☾『𝗞𝗮𝗻𝗲𝗸𝗶 • 𝗖𝗵𝗮𝗻𝗻𝗲𝗹』☽',
       serverMessageId: 1
     }
   }
@@ -601,7 +351,7 @@ return
   }
   if (cmdData.isOwner && !global.owner.map(num => num + '@s.whatsapp.net').includes(sender)) {
     if (settings.prefix === true) return;
-    return m.reply(`ꕤ El comando *${command}* no existe.\n✎ Usa *${usedPrefix}help* para ver la lista de comandos disponibles.`);
+    return m.reply(` El comando *${command}* solo puede ser usado por el creadot del *BOT*.`);
   }
   if (cmdData.isAdmin && !isAdmins) return client.reply(m.chat, mess.admin, m);
   if (cmdData.botAdmin && !isBotAdmins) return client.reply(m.chat, mess.botAdmin, m);
@@ -614,9 +364,27 @@ return
     user.exp = (user.exp || 0) + Math.floor(Math.random() * 100);
     user.name = m.pushName;
     users.stats[today].cmds++;
-    await cmdData.run(client, m, args, usedPrefix, command, text);
+      
+    if (cmdData.isHandlerStyle) {
+      await cmdData.run(m, {
+        conn: client,
+        client,
+        text,
+        args,
+        usedPrefix,
+        command,
+        isAdmin: isAdmins,
+        isOwner: isOwners,
+        isBotAdmin: isBotAdmins,
+        groupMetadata,
+        participants: groupMetadata?.participants || [],
+        pushname
+      });
+    } else {
+      await cmdData.run(client, m, args, usedPrefix, command, text);
+    }
   } catch (error) {
-    await client.sendMessage(m.chat, { text: `《✧》 Error al ejecutar el comando\n${error}` }, { quoted: m });
+ await client.sendMessage(m.chat, { text: `《✧》 Error al ejecutar el comando\n${error}` }, { quoted: m });
   }
   level(m);
 };
